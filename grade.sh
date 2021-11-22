@@ -4,7 +4,7 @@ set -eu
 # DCC605: Basic shell programming assignment
 # Autograding script
 
-srcfn="src/sh.c"
+srcfn="sh.c"
 total=9
 ecnt=0
 

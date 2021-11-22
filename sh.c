@@ -52,6 +52,11 @@ struct pipecmd {
 int fork1(void);  // Fork mas fechar se ocorrer erro.
 struct cmd *parsecmd(char*); // Processar o linha de comando.
 
+void
+exec(struct execcmd* cmd){
+  execvp(cmd->argv[0], cmd->argv);
+}
+
 /* Executar comando cmd.  Nunca retorna. */
 void
 runcmd(struct cmd *cmd)
@@ -73,11 +78,7 @@ runcmd(struct cmd *cmd)
     ecmd = (struct execcmd*)cmd;
     if(ecmd->argv[0] == 0)
       exit(0);
-    /* MARK START task2
-     * TAREFA2: Implemente codigo abaixo para executar
-     * comandos simples. */
-    fprintf(stderr, "exec nao implementado\n");
-    /* MARK END task2 */
+    exec(ecmd);
     break;
 
   case '>':

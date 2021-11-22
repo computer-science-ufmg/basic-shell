@@ -1,5 +1,6 @@
-# Build folder
+# Build products
 build/**/*
+sh
 
 # Prerequisites
 *.d
