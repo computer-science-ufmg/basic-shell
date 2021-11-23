@@ -56,7 +56,10 @@ struct cmd *parsecmd(char*); // Processar o linha de comando.
 
 void
 exec(struct execcmd* cmd){
-  execvp(cmd->argv[0], cmd->argv);
+  if(execvp(cmd->argv[0], cmd->argv) != 0){
+    fprintf(stderr, cmd->argv[0]);
+    fprintf(stderr, ": comando não encontrado\n");
+  }
 }
 
 void
