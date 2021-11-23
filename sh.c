@@ -49,12 +49,32 @@ struct pipecmd {
   struct cmd *right; // lado direito do pipe
 };
 
+void runcmd(struct cmd *cmd);
+
 int fork1(void);  // Fork mas fechar se ocorrer erro.
 struct cmd *parsecmd(char*); // Processar o linha de comando.
 
 void
 exec(struct execcmd* cmd){
   execvp(cmd->argv[0], cmd->argv);
+}
+
+void
+execpipe(struct pipecmd* pcmd){
+  int fd[2];
+  if(pipe(fd) == 0){
+    if(fork() == 0){
+      dup2(fd[0], STDIN_FILENO);
+      runcmd(pcmd->right);
+    }
+    else{
+      int stdoutfd = dup(STDOUT_FILENO);
+      dup2(fd[1], STDOUT_FILENO);
+      runcmd(pcmd->left);
+      close(fd[1]);
+      dup2(stdoutfd, STDOUT_FILENO);
+    }
+  }
 }
 
 /* Executar comando cmd.  Nunca retorna. */
@@ -94,11 +114,7 @@ runcmd(struct cmd *cmd)
 
   case '|':
     pcmd = (struct pipecmd*)cmd;
-    /* MARK START task4
-     * TAREFA4: Implemente codigo abaixo para executar
-     * comando com pipes. */
-    fprintf(stderr, "pipe nao implementado\n");
-    /* MARK END task4 */
+    execpipe(pcmd);
     break;
   }    
   exit(0);
