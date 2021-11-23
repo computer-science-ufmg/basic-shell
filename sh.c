@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -65,18 +64,34 @@ void
 execpipe(struct pipecmd* pcmd){
   int fd[2];
   if(pipe(fd) == 0){
-    if(fork() == 0){
+    if(fork1() == 0){
       dup2(fd[0], STDIN_FILENO);
       runcmd(pcmd->right);
+      close(fd[0]);
     }
     else{
-      int stdoutfd = dup(STDOUT_FILENO);
+      // int stdoutfd = dup(STDOUT_FILENO);
       dup2(fd[1], STDOUT_FILENO);
       runcmd(pcmd->left);
       close(fd[1]);
-      dup2(stdoutfd, STDOUT_FILENO);
+      // dup2(stdoutfd, STDOUT_FILENO);
     }
   }
+}
+
+void
+redirect (struct redircmd* rcmd){
+    int fd;
+    if(rcmd->type == 0){ // < = 0 e > = 1 
+      fd = open(rcmd->file, rcmd->mode, S_IRUSR|S_IRGRP|S_IROTH);
+      dup2(fd, STDIN_FILENO);      
+    } 
+    else {
+      fd = open(rcmd->file, rcmd->mode, S_IWUSR|S_IWGRP|S_IWOTH);
+      dup2(fd, STDOUT_FILENO);
+    }
+    // runcmd(rcmd->cmd);
+    close(fd);
 }
 
 /* Executar comando cmd.  Nunca retorna. */
@@ -109,7 +124,7 @@ runcmd(struct cmd *cmd)
     /* MARK START task3
      * TAREFA3: Implemente codigo abaixo para executar
      * comando com redirecionamento. */
-    fprintf(stderr, "redir nao implementado\n");
+    redirect(rcmd);    
     /* MARK END task3 */
     runcmd(rcmd->cmd);
     break;

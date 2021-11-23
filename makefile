@@ -19,5 +19,8 @@ clean:
 run: $(TARGET_NAME)
 	$(TARGET_PATH)
 
+test: $(TARGET_NAME)
+	./grade.sh
+
 mem: $(TARGET_NAME)
 	valgrind --leak-check=full --show-leak-kinds=all $(TARGET_PATH)

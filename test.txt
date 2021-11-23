@@ -1,0 +1,10 @@
+LICENSE
+README.md
+build
+docs
+grade.sh
+makefile
+myshell.out
+sh.c
+test.txt
+tests
