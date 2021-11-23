@@ -83,7 +83,7 @@ execpipe(struct pipecmd* pcmd){
 void
 runcmd(struct cmd *cmd)
 {
-  int p[2], r;
+  // int p[2], r;
   struct execcmd *ecmd;
   struct pipecmd *pcmd;
   struct redircmd *rcmd;
