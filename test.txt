@@ -5,6 +5,7 @@ docs
 grade.sh
 makefile
 myshell.out
+sh
 sh.c
 test.txt
 tests

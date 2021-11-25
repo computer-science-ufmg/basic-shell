@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <string.h>
 #include <assert.h>
@@ -81,17 +82,8 @@ execpipe(struct pipecmd* pcmd){
 
 void
 redirect (struct redircmd* rcmd){
-    int fd;
-    if(rcmd->type == 0){ // < = 0 e > = 1 
-      fd = open(rcmd->file, rcmd->mode, S_IRUSR|S_IRGRP|S_IROTH);
-      dup2(fd, STDIN_FILENO);      
-    } 
-    else {
-      fd = open(rcmd->file, rcmd->mode, S_IWUSR|S_IWGRP|S_IWOTH);
-      dup2(fd, STDOUT_FILENO);
-    }
-    // runcmd(rcmd->cmd);
-    close(fd);
+    close(rcmd->fd);
+    open(rcmd->file, rcmd->mode);
 }
 
 /* Executar comando cmd.  Nunca retorna. */
@@ -121,11 +113,7 @@ runcmd(struct cmd *cmd)
   case '>':
   case '<':
     rcmd = (struct redircmd*)cmd;
-    /* MARK START task3
-     * TAREFA3: Implemente codigo abaixo para executar
-     * comando com redirecionamento. */
     redirect(rcmd);    
-    /* MARK END task3 */
     runcmd(rcmd->cmd);
     break;
 
