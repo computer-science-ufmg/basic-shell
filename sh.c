@@ -64,26 +64,39 @@ exec(struct execcmd* cmd){
 void
 execpipe(struct pipecmd* pcmd){
   int fd[2];
-  if(pipe(fd) == 0){
+  if(pipe(fd) >= 0){
     if(fork1() == 0){
-      dup2(fd[0], STDIN_FILENO);
-      runcmd(pcmd->right);
-      close(fd[0]);
-    }
-    else{
       // int stdoutfd = dup(STDOUT_FILENO);
-      dup2(fd[1], STDOUT_FILENO);
-      runcmd(pcmd->left);
+      close(STDOUT_FILENO);
+      dup(fd[1]);
+      close(fd[0]);
       close(fd[1]);
+      runcmd(pcmd->left);
       // dup2(stdoutfd, STDOUT_FILENO);
     }
+    else{
+      close(STDIN_FILENO);
+      dup(fd[0]);
+      close(fd[0]);
+      close(fd[1]);
+      runcmd(pcmd->right);
+    }
+    close(fd[0]);
+    close(fd[1]);
   }
 }
 
 void
-redirect (struct redircmd* rcmd){
+execredirect (struct redircmd* rcmd){
     close(rcmd->fd);
     open(rcmd->file, rcmd->mode);
+    runcmd(rcmd->cmd);
+    // if(open(rcmd->file, rcmd->mode) >= 0){
+    //   runcmd(rcmd->cmd);
+    // }
+    // else{
+    //   fprintf(stderr, "Erro ao abrir arquivo %s\n", rcmd->file);
+    // }
 }
 
 /* Executar comando cmd.  Nunca retorna. */
@@ -113,8 +126,7 @@ runcmd(struct cmd *cmd)
   case '>':
   case '<':
     rcmd = (struct redircmd*)cmd;
-    redirect(rcmd);    
-    runcmd(rcmd->cmd);
+    execredirect(rcmd);
     break;
 
   case '|':
@@ -204,7 +216,7 @@ redircmd(struct cmd *subcmd, char *file, int type)
   cmd->type = type;
   cmd->cmd = subcmd;
   cmd->file = file;
-  cmd->mode = (type == '<') ?  O_RDONLY : O_WRONLY|O_CREAT|O_TRUNC;
+  cmd->mode = (type == '<') ?  O_RDONLY : O_WRONLY|O_CREAT|O_TRUNC|O_RDONLY;
   cmd->fd = (type == '<') ? 0 : 1;
   return (struct cmd*)cmd;
 }
