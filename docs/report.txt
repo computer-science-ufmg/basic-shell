@@ -13,15 +13,21 @@ Preencha as linhas abaixo com o nome e o e-mail dos integrantes do
 grupo.  Substitua XX pela contribuição de cada membro do grupo no
 desenvolvimento do trabalho.
 
-Nome <email@domain.br> XX%
-Nome <email@domain.br> XX%
-Nome <email@domain.br> XX%
+Luiz Philippe Pereira <luizphilippe@dcc.ufmg.br> Implementação do comando exec e contribuição na implementação do comando pipe e resposta da tarefa 1%
+Rita Rezende Borges de Lima <ritaborgesdelima@dcc.ufmg.br> Implementação do comando redirect e contribuição na implementação do comando pipe e resposta da tarefa 1%
 
 3. Referências bibliográficas
 
-Adicione aqui as referências bibliográficas.
+- https://www.dca.ufrn.br/~adelardo/cursos/DCA409/node39.html
+- https://www.geeksforgeeks.org/exec-family-of-functions-in-c/
+- https://www.geeksforgeeks.org/fork-system-call/
+- https://www.geeksforgeeks.org/dup-dup2-linux-system-call/
+- https://www.geeksforgeeks.org/pipe-system-call/
+- https://www.geeksforgeeks.org/input-output-system-calls-c-create-open-close-read-write/
 
 4. Estruturas de dados
 
-Descreva e justifique as estruturas de dados e algoritmos utilizados
-em sua solução.
+Foram implementadas três funções responsáveis por executar as diferentes operações da interface: exec, execredirect e execpipe.
+- exec recebe um ponteiro para instância de struct execcmd e realiza a chamada de sistema de execvp com os argumentos recebidos na linha de comando.
+- execredirect realiza o redirecionamento do stdin/stdout para o buffer especificado, ele recebe uma instância de ponteiro de struct redircmd e realiza a chamada de sistema open para realizar o redirecionamento.
+- execpipe realiza a operação de pipe de comandos, ele recebe um ponteiro de instância de struct pipecmd, realiza um pipe para obter os file descriptors para escrita e leitura, faz um fork da execução e delega ao processo filho a execução do comando a esquerda do pipe, que escreverá na saída do comando a direita executado pelo processo pai.

@@ -160,8 +160,12 @@ main(void)
      * Insira sua resposta no código e modifique o fprintf abaixo
      * para reportar o erro corretamente.
      * 
-     * O if verifica se o comando recebido é um comando change directory,
-     * caso positivo, executa o chdir do C para completar a ação.
+     * O if mais acima verifica se o comando recebido é um comando change directory,
+     * caso positivo, executa o system call chdir para completar a ação.
+     * 
+     * O if mais interno, verifica se o retorno do chdir é maior que 0,
+     * isso porque o system call retorna -1 em caso de falha, caso essa falha
+     * tenha occorrido, é exibida uma mensagem de erro.
      */
     if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
       buf[strlen(buf)-1] = 0;
