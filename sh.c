@@ -89,14 +89,12 @@ execpipe(struct pipecmd* pcmd){
 void
 execredirect (struct redircmd* rcmd){
     close(rcmd->fd);
-    open(rcmd->file, rcmd->mode);
-    runcmd(rcmd->cmd);
-    // if(open(rcmd->file, rcmd->mode) >= 0){
-    //   runcmd(rcmd->cmd);
-    // }
-    // else{
-    //   fprintf(stderr, "Erro ao abrir arquivo %s\n", rcmd->file);
-    // }
+    if(open(rcmd->file, rcmd->mode) >= 0){
+      runcmd(rcmd->cmd);
+    }
+    else{
+      fprintf(stderr, "Erro ao abrir arquivo %s\n", rcmd->file);
+    }
 }
 
 /* Executar comando cmd.  Nunca retorna. */
@@ -216,7 +214,7 @@ redircmd(struct cmd *subcmd, char *file, int type)
   cmd->type = type;
   cmd->cmd = subcmd;
   cmd->file = file;
-  cmd->mode = (type == '<') ?  O_RDONLY : O_WRONLY|O_CREAT|O_TRUNC|O_RDONLY;
+  cmd->mode = (type == '<') ?  O_RDONLY : O_WRONLY|O_CREAT|O_TRUNC;
   cmd->fd = (type == '<') ? 0 : 1;
   return (struct cmd*)cmd;
 }
